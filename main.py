@@ -2,6 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import re
+import os
+import threading
+from flask import Flask
 
 # --- TELEGRAM MƏLUMATLARI ---
 TELEGRAM_BOT_TOKEN = "8846248939:AAF3J7fQztaU4ZLYTklTABqp6vuLTraB8Qk"
@@ -17,6 +20,21 @@ MAX_PRICE_AZN = 10000
 
 # Proqram başlayanda saytdakı ən son (böyük) ID-ni yadda saxlayacaq
 last_max_id = 0
+
+# 1. Render üçün kiçik Veb Server (Port xətasını aradan qaldırmaq üçün)
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot 24/7 aktivdir!"
+
+def run_flask():
+    port = int(os.environ.get("PORT", 10000))
+    # use_reloader=False arxa fonda thread xətasının qarşısını alır
+    app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
+
+# Veb serveri arxa fonda (thread) başladırıq
+threading.Thread(target=run_flask, daemon=True).start()
 
 def send_telegram_message(message):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
@@ -160,10 +178,10 @@ if __name__ == "__main__":
     while True:
         try:
             check_for_new_ads()
-            time.sleep(5)
+            time.sleep(10)
         except KeyboardInterrupt:
             print("\nİzləmə dayandırıldı.")
             break
         except Exception as e:
             print(f"Xəta: {e}")
-            time.sleep(5)
+            time.sleep(10)
