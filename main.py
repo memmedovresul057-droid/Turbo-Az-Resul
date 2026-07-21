@@ -184,10 +184,4 @@ def start_bot():
             print(f"Xəta baş verdi: {e}")
             time.sleep(5)
 
-if __name__ == "__main__":
-    # 1. Bot izləmə prosesini arxa fonda (thread) başladırıq
-    threading.Thread(target=start_bot, daemon=True).start()
-
-    # 2. Əsas thread-də Flask-ı başladırıq
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port, use_reloader=False)
+threading.Thread(target=start_bot, daemon=True).start()
