@@ -11,7 +11,11 @@ TELEGRAM_BOT_TOKEN = "8846248939:AAF3J7fQztaU4ZLYTklTABqp6vuLTraB8Qk"
 TELEGRAM_CHAT_ID = "1442591866"
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "az,az-AZ;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Cache-Control": "max-age=0",
+    "Connection": "keep-alive"
 }
 
 # --- FİLTR SAZLAMALARI ---
@@ -52,9 +56,11 @@ def send_telegram_message(message):
 def fetch_ads_page():
     url = "https://turbo.az/autos?q%5Border_filter%5D=created_at"
     try:
-        response = requests.get(url, headers=HEADERS, timeout=5)
+        response = requests.get(url, headers=HEADERS, timeout=10)
         if response.status_code == 200:
             return BeautifulSoup(response.text, "html.parser")
+        else:
+            print(f"Sayt xətası: Status Code {response.status_code}")
     except Exception as e:
         print(f"Saytla bağlantı xətası: {e}")
     return None
