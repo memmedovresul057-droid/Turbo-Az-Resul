@@ -171,17 +171,23 @@ def check_for_new_ads():
         # Ən son gördüyümüz ID-ni yeniləyirik
         last_max_id = max(ad["id"] for ad in new_ads)
 
-if __name__ == "__main__":
+def start_bot():
+    """Botun izləmə dövrünü arxa fonda işlədən funksiya"""
     while not initialize_tracker():
         time.sleep(3)
 
     while True:
         try:
             check_for_new_ads()
-            time.sleep(10)
-        except KeyboardInterrupt:
-            print("\nİzləmə dayandırıldı.")
-            break
+            time.sleep(15)
         except Exception as e:
-            print(f"Xəta: {e}")
-            time.sleep(10)
+            print(f"Xəta baş verdi: {e}")
+            time.sleep(5)
+
+if __name__ == "__main__":
+    # 1. Bot izləmə prosesini arxa fonda (thread) başladırıq
+    threading.Thread(target=start_bot, daemon=True).start()
+
+    # 2. Əsas thread-də Flask-ı başladırıq (Render portu dərhal görəcək!)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
