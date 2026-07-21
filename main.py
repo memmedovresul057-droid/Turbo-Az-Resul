@@ -59,12 +59,17 @@ def send_telegram_message(message):
 
 def fetch_ads_page():
     url = "https://turbo.az/autos?q%5Border_filter%5D=created_at"
+    # Sərbəst proxy vasitəsilə sorğunu yönləndiririk
+    proxies = {
+        "http": "http://api.allorigins.win/raw?url=",
+    }
     try:
-        response = scraper.get(url, headers=HEADERS, timeout=10)
+        # Sorğunu birbaşa proxy/mirror vasitəsilə atırıq
+        response = requests.get(f"https://api.allorigins.win/raw?url={url}", headers=HEADERS, timeout=10)
         if response.status_code == 200:
             return BeautifulSoup(response.text, "html.parser")
         else:
-            print(f"Sayt xətası: Status Code {response.status_code}")
+            print(f"Sayt xətası verdi: {response.status_code}")
     except Exception as e:
         print(f"Saytla bağlantı xətası: {e}")
     return None
