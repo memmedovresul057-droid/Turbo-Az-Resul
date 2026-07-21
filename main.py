@@ -5,6 +5,10 @@ import re
 import os
 import threading
 from flask import Flask
+import cloudscraper
+
+# Standart requests yerine Cloudflare keçən scraper yaradırıq
+scraper = cloudscraper.create_scraper()
 
 # --- TELEGRAM MƏLUMATLARI ---
 TELEGRAM_BOT_TOKEN = "8846248939:AAF3J7fQztaU4ZLYTklTABqp6vuLTraB8Qk"
@@ -56,7 +60,7 @@ def send_telegram_message(message):
 def fetch_ads_page():
     url = "https://turbo.az/autos?q%5Border_filter%5D=created_at"
     try:
-        response = requests.get(url, headers=HEADERS, timeout=10)
+        response = scraper.get(url, headers=HEADERS, timeout=10)
         if response.status_code == 200:
             return BeautifulSoup(response.text, "html.parser")
         else:
@@ -180,7 +184,7 @@ def check_for_new_ads():
 def start_bot():
     """Botun izləmə dövrünü arxa fonda işlədən funksiya"""
     while not initialize_tracker():
-        time.sleep(3)
+        time.sleep(10)
 
     while True:
         try:
@@ -188,7 +192,7 @@ def start_bot():
             time.sleep(15)
         except Exception as e:
             print(f"Xəta baş verdi: {e}")
-            time.sleep(5)
+            time.sleep(15)
 
 # Botun izləmə dövrünü arxa fonda başladırıq
 threading.Thread(target=start_bot, daemon=True).start()
